@@ -2,112 +2,93 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MUNKI-D | GOD MODE TERMINAL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MUNKI-D | MOBILE COMMAND</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        :root { --danger: #ff003c; --safe: #00f2ff; --bg: #050505; }
+        body { background: var(--bg); color: #fff; font-family: 'Share Tech Mono', monospace; margin: 0; padding: 10px; box-sizing: border-box; }
         
-        :root { --danger: #ff003c; --safe: #00f2ff; --warn: #f4ff00; --bg: #020202; }
-        body { background: var(--bg); color: #fff; font-family: 'Share Tech Mono', monospace; margin: 0; overflow: hidden; }
+        /* Header compatto */
+        header { border-bottom: 1px solid var(--safe); padding-bottom: 5px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 18px; color: var(--safe); text-shadow: 0 0 5px var(--safe); }
+
+        /* Area Radici Semplificata per Mobile */
+        .visual-area { height: 220px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(0,242,255,0.1); border-radius: 10px; }
+        .kishi-core { width: 80px; height: 80px; border: 2px solid var(--safe); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; background: #000; z-index: 5; box-shadow: 0 0 20px var(--safe); }
+        .node { position: absolute; width: 45px; height: 45px; border: 1px solid var(--safe); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; background: rgba(0,0,0,0.8); }
         
-        /* Layout Strutturale */
-        .wrapper { display: grid; grid-template-rows: 60px 1fr 200px; height: 100vh; padding: 10px; box-sizing: border-box; }
-        
-        /* Top Bar */
-        header { border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
-        .glitch { font-size: 24px; color: var(--safe); text-shadow: 2px 0 var(--danger); animation: glitch 2s infinite; }
+        /* Posizioni fisse per non farle accavallare */
+        .wbtc { top: 15px; }
+        .pol { bottom: 20px; left: 40px; }
+        .usdc { bottom: 20px; right: 40px; }
 
-        /* Mappa Centrale */
-        .main-view { display: flex; align-items: center; justify-content: center; position: relative; }
-        .core-radix { width: 150px; height: 150px; border: 2px solid var(--safe); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 50px rgba(0,242,255,0.2); z-index: 2; background: var(--bg); }
-        .orbit { position: absolute; border: 1px dashed rgba(255,255,255,0.1); border-radius: 50%; animation: rotate 20s linear infinite; }
-        .pool-satellite { position: absolute; width: 60px; height: 60px; border-radius: 50%; border: 1px solid var(--safe); background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 8px; }
+        /* Box Dati ordinati */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { border-left: 3px solid var(--danger); background: rgba(255,255,255,0.05); padding: 10px; }
+        .stat-label { font-size: 10px; color: #888; margin-bottom: 5px; }
+        .stat-value { font-size: 16px; font-weight: bold; }
 
-        /* Pannelli Laterali HUD */
-        .hud-left, .hud-right { position: absolute; top: 100px; width: 250px; padding: 15px; background: rgba(255,255,255,0.02); border-left: 3px solid var(--danger); }
-        .hud-right { right: 20px; border-left: none; border-right: 3px solid var(--safe); }
+        /* Terminale che non copre tutto */
+        .terminal-box { border: 1px solid rgba(255,255,255,0.1); height: 150px; overflow-y: auto; font-size: 11px; padding: 8px; background: #000; }
+        .log-line { margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
+        .log-time { color: var(--safe); margin-right: 5px; }
 
-        /* Terminale Inferiore */
-        footer { border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.8); padding: 10px; overflow-y: auto; font-size: 13px; color: #aaa; }
-        .log-entry { margin-bottom: 5px; border-left: 2px solid var(--danger); padding-left: 10px; }
-        .log-time { color: #666; margin-right: 10px; }
-
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes glitch { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
-        .blink { animation: blinker 1s linear infinite; }
-        @keyframes blinker { 50% { opacity: 0; } }
+        /* Bottoni grandi per dita */
+        .btn-action { width: 100%; padding: 12px; margin-bottom: 10px; background: none; border: 1px solid var(--danger); color: var(--danger); font-family: inherit; font-size: 12px; text-transform: uppercase; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <header>
-        <div class="glitch">MUNKI-D // GOD MODE</div>
-        <div style="text-align: right;">
-            <div id="clock" style="font-size: 18px;">00:00:00</div>
-            <div style="color: var(--safe); font-size: 10px;">LATENCY: 12ms | NET: POLYGON</div>
-        </div>
-    </header>
+<header>
+    <div class="logo">MUNKI-D // v2.6</div>
+    <div id="clock" style="font-size: 14px;">00:00:00</div>
+</header>
 
-    <main class="main-view">
-        <div class="hud-left">
-            <div style="color: var(--danger);">THREAT LEVEL: 12%</div>
-            <div style="height: 5px; background: #333; margin: 10px 0;">
-                <div style="width: 12%; height: 100%; background: var(--danger);"></div>
-            </div>
-            <div style="font-size: 12px; margin-top: 20px;">
-                CACCIA ATTIVA: <span style="color: #00ff00;">ON</span><br>
-                SENTINEL: <span style="color: #00ff00;">PROTECTING</span><br>
-                PROFIT VIRTUAL: <span style="color: #fff; font-size: 18px;">€20.05</span>
-            </div>
-        </div>
-
-        <div class="core-radix">KISHI CORE</div>
-        <div class="orbit" style="width: 400px; height: 400px;">
-            <div class="pool-satellite" style="top: -30px; left: 170px;">WBTC</div>
-            <div class="pool-satellite" style="bottom: 50px; left: -20px;">POL</div>
-            <div class="pool-satellite" style="bottom: 50px; right: -20px;">USDC</div>
-        </div>
-
-        <div class="hud-right">
-            <div style="color: var(--safe);">STRATEGIC OPS</div>
-            <button style="width: 100%; background: none; border: 1px solid var(--safe); color: var(--safe); margin-top: 10px; padding: 5px; cursor: pointer;">FORCE REBALANCING</button>
-            <button style="width: 100%; background: none; border: 1px solid var(--danger); color: var(--danger); margin-top: 10px; padding: 5px; cursor: pointer;">EMERGENCY STOP</button>
-            <div style="margin-top: 20px; font-size: 10px; line-height: 1.4;">
-                MEMORIA RADICI: 84%<br>
-                EVENTI ANALIZZATI: 14.502<br>
-                ATTACCHI RESPINTI: 42
-            </div>
-        </div>
-    </main>
-
-    <footer id="cerebro-log">
-        </footer>
+<div class="visual-area">
+    <div class="kishi-core">KISHI CORE</div>
+    <div class="node wbtc">WBTC</div>
+    <div class="node pol">POL</div>
+    <div class="node usdc">USDC</div>
 </div>
 
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">PROFIT VIRTUAL</div>
+        <div class="stat-value" style="color:#00ff00">€20.05</div>
+    </div>
+    <div class="stat-card" style="border-color: var(--safe);">
+        <div class="stat-label">THREAT LEVEL</div>
+        <div class="stat-value">12%</div>
+    </div>
+</div>
+
+<button class="btn-action">EMERGENCY STOP</button>
+<button class="btn-action" style="border-color: var(--safe); color: var(--safe);">FORCE REBALANCING</button>
+
+<div class="terminal-box" id="log">
+    </div>
+
 <script>
-    // Orologio
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
-    // Simulazione Intelligenza Cerebro
-    const cerebro = document.getElementById('cerebro-log');
-    const thoughts = [
-        "Analizzando la divergenza tra QuickSwap e Uniswap su WBTC...",
-        "Rilevata micro-oscillazione. Munki-D sta calcolando il percorso ottimale.",
-        "Sentinel ha rilevato un bot nemico (0x33b...). Nessuna azione necessaria, gas troppo alto per lui.",
-        "Teoria delle Radici: la pool POL sta crescendo in forza. Consiglio iniezione.",
-        "Il mercato sta dormendo. Munki-D passa in modalità Risparmio Energetico.",
-        "Flash Loan simulato con successo: profitto potenziale di €1.12 rilevato."
+    const log = document.getElementById('log');
+    const msgs = [
+        "Analisi divergenza pool WBTC...",
+        "Sentinel: Rilevata scansione esterna.",
+        "Teoria Radici: Flusso POL stabile.",
+        "Flash Loan simulato: +€0.45",
+        "Monitoraggio gas Polygon: 32 Gwei"
     ];
 
-    function addThought() {
-        const entry = document.createElement('div');
-        entry.className = 'log-entry';
-        entry.innerHTML = `<span class="log-time">[${new Date().toLocaleTimeString()}]</span> <span style="color:#fff">MUNKI-D:</span> ${thoughts[Math.floor(Math.random()*thoughts.length)]}`;
-        cerebro.prepend(entry);
-        if(cerebro.children.length > 8) cerebro.lastChild.remove();
+    function addLog() {
+        const div = document.createElement('div');
+        div.className = 'log-line';
+        div.innerHTML = `<span class="log-time">[${new Date().toLocaleTimeString().slice(0,5)}]</span> ${msgs[Math.floor(Math.random()*msgs.length)]}`;
+        log.prepend(div);
+        if(log.children.length > 10) log.lastChild.remove();
     }
-    setInterval(addThought, 4000);
+    setInterval(addLog, 4000);
 </script>
 
 </body>
