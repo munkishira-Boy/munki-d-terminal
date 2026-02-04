@@ -1,50 +1,182 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MUNKI-D | MOBILE COMMAND</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-        :root { --danger: #ff003c; --safe: #00f2ff; --bg: #050505; }
-        body { background: var(--bg); color: #fff; font-family: 'Share Tech Mono', monospace; margin: 0; padding: 10px; box-sizing: border-box; }
-        
-        /* Header compatto */
-        header { border-bottom: 1px solid var(--safe); padding-bottom: 5px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 18px; color: var(--safe); text-shadow: 0 0 5px var(--safe); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MUNKI-D | MOBILE COMMAND</title>
 
-        /* Area Radici Semplificata per Mobile */
-        .visual-area { height: 220px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(0,242,255,0.1); border-radius: 10px; }
-        .kishi-core { width: 80px; height: 80px; border: 2px solid var(--safe); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; background: #000; z-index: 5; box-shadow: 0 0 20px var(--safe); }
-        .node { position: absolute; width: 45px; height: 45px; border: 1px solid var(--safe); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; background: rgba(0,0,0,0.8); }
-        
-        /* Posizioni fisse per non farle accavallare */
-        .wbtc { top: 15px; }
-        .pol { bottom: 20px; left: 40px; }
-        .usdc { bottom: 20px; right: 40px; }
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
-        /* Box Dati ordinati */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-card { border-left: 3px solid var(--danger); background: rgba(255,255,255,0.05); padding: 10px; }
-        .stat-label { font-size: 10px; color: #888; margin-bottom: 5px; }
-        .stat-value { font-size: 16px; font-weight: bold; }
+<style>
+:root {
+    --bg: #050505;
+    --panel: rgba(255,255,255,0.05);
+    --safe: #00f2ff;
+    --danger: #ff003c;
+    --warn: #ffaa00;
+    --ok: #00ff99;
+}
 
-        /* Terminale che non copre tutto */
-        .terminal-box { border: 1px solid rgba(255,255,255,0.1); height: 150px; overflow-y: auto; font-size: 11px; padding: 8px; background: #000; }
-        .log-line { margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
-        .log-time { color: var(--safe); margin-right: 5px; }
+* { box-sizing: border-box; }
 
-        /* Bottoni grandi per dita */
-        .btn-action { width: 100%; padding: 12px; margin-bottom: 10px; background: none; border: 1px solid var(--danger); color: var(--danger); font-family: inherit; font-size: 12px; text-transform: uppercase; cursor: pointer; }
-    </style>
+body {
+    margin: 0;
+    padding: 10px;
+    background: var(--bg);
+    color: #fff;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+/* HEADER */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--safe);
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+}
+
+.logo {
+    color: var(--safe);
+    text-shadow: 0 0 6px var(--safe);
+    font-size: 16px;
+}
+
+.status-line {
+    font-size: 11px;
+    color: #aaa;
+}
+
+#botState.ACTIVE { color: var(--ok); }
+#botState.DEFENSIVE { color: var(--warn); }
+#botState.ALERT { color: var(--danger); }
+
+/* VISUAL CORE */
+.visual-area {
+    height: 220px;
+    border: 1px solid rgba(0,242,255,0.15);
+    border-radius: 10px;
+    margin-bottom: 18px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.kishi-core {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 2px solid var(--safe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    box-shadow: 0 0 18px var(--safe);
+    background: #000;
+    z-index: 2;
+}
+
+.node {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid var(--safe);
+    font-size: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.85);
+}
+
+.node.wbtc { top: 18px; }
+.node.pol { bottom: 20px; left: 40px; }
+.node.usdc { bottom: 20px; right: 40px; }
+
+/* STATS */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.stat-card {
+    background: var(--panel);
+    padding: 10px;
+    border-left: 3px solid var(--danger);
+}
+
+.stat-label {
+    font-size: 10px;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+/* BUTTONS */
+.btn {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: none;
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    font-family: inherit;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.btn.safe {
+    border-color: var(--safe);
+    color: var(--safe);
+}
+
+/* LOG */
+.terminal {
+    height: 160px;
+    background: #000;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 8px;
+    overflow-y: auto;
+    font-size: 11px;
+}
+
+.log-line {
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: 4px;
+}
+
+.log-time {
+    color: var(--safe);
+    margin-right: 4px;
+}
+
+/* MODE FILTER */
+[data-operator] { display: none; }
+</style>
 </head>
+
 <body>
 
-<header>
-    <div class="logo">MUNKI-D // v2.6</div>
-    <div id="clock" style="font-size: 14px;">00:00:00</div>
+<!-- HEADER -->
+<header class="top-bar">
+    <div class="logo">MUNKI-D v3.0</div>
+    <div class="status-line">
+        <span id="botState">ACTIVE</span> |
+        <span>POLYGON</span> |
+        <span id="gasState">GAS: LOW</span>
+    </div>
 </header>
 
+<!-- VISUAL -->
 <div class="visual-area">
     <div class="kishi-core">KISHI CORE</div>
     <div class="node wbtc">WBTC</div>
@@ -52,43 +184,103 @@
     <div class="node usdc">USDC</div>
 </div>
 
+<!-- STATS -->
 <div class="stats-grid">
     <div class="stat-card">
-        <div class="stat-label">PROFIT VIRTUAL</div>
-        <div class="stat-value" style="color:#00ff00">€20.05</div>
+        <div class="stat-label">PROFIT</div>
+        <div class="stat-value" style="color:var(--ok)">€20.05</div>
     </div>
-    <div class="stat-card" style="border-color: var(--safe);">
-        <div class="stat-label">THREAT LEVEL</div>
-        <div class="stat-value">12%</div>
+
+    <div class="stat-card" data-observer>
+        <div class="stat-label">BOT STATUS</div>
+        <div class="stat-value">STABLE</div>
+    </div>
+
+    <div class="stat-card" data-operator>
+        <div class="stat-label">STRATEGY</div>
+        <div class="stat-value">DEFENSIVE</div>
+    </div>
+
+    <div class="stat-card" data-operator>
+        <div class="stat-label">LAST ACTION</div>
+        <div class="stat-value">HOLD</div>
     </div>
 </div>
 
-<button class="btn-action">EMERGENCY STOP</button>
-<button class="btn-action" style="border-color: var(--safe); color: var(--safe);">FORCE REBALANCING</button>
+<!-- ACTIONS -->
+<button class="btn" data-operator>EMERGENCY STOP</button>
+<button class="btn safe" data-operator>FORCE REBALANCE</button>
 
-<div class="terminal-box" id="log">
-    </div>
+<!-- LOG -->
+<div class="terminal" id="log"></div>
 
 <script>
-    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+/* GLOBAL STATE */
+let VIEW_MODE = "OPERATOR"; // OPERATOR | OBSERVER
+let BOT_STATE = "ACTIVE";   // ACTIVE | DEFENSIVE | ALERT
 
-    const log = document.getElementById('log');
-    const msgs = [
-        "Analisi divergenza pool WBTC...",
-        "Sentinel: Rilevata scansione esterna.",
-        "Teoria Radici: Flusso POL stabile.",
-        "Flash Loan simulato: +€0.45",
-        "Monitoraggio gas Polygon: 32 Gwei"
-    ];
+const log = document.getElementById("log");
+const botStateEl = document.getElementById("botState");
 
-    function addLog() {
-        const div = document.createElement('div');
-        div.className = 'log-line';
-        div.innerHTML = `<span class="log-time">[${new Date().toLocaleTimeString().slice(0,5)}]</span> ${msgs[Math.floor(Math.random()*msgs.length)]}`;
-        log.prepend(div);
-        if(log.children.length > 10) log.lastChild.remove();
+/* MODE HANDLER */
+function applyViewMode() {
+    document.querySelectorAll("[data-operator]").forEach(el => {
+        el.style.display = VIEW_MODE === "OPERATOR" ? "block" : "none";
+    });
+    document.querySelectorAll("[data-observer]").forEach(el => {
+        el.style.display = VIEW_MODE === "OBSERVER" ? "block" : "none";
+    });
+    addSystemLog(`VIEW MODE: ${VIEW_MODE}`, "SYSTEM");
+}
+
+/* LOG */
+function addSystemLog(text, level="INFO") {
+    const div = document.createElement("div");
+    div.className = "log-line";
+    div.innerHTML = `<span class="log-time">[${new Date().toLocaleTimeString().slice(0,5)}]</span>[${level}] ${text}`;
+    log.prepend(div);
+    if (log.children.length > 12) log.lastChild.remove();
+}
+
+/* VOICE */
+const LOG_MESSAGES = {
+    OPERATOR: [
+        "External scan detected on POL.",
+        "Exposure reduced by 12%.",
+        "Strategy switched: DEFENSIVE.",
+        "Gas spike detected. Holding positions."
+    ],
+    OBSERVER: [
+        "Market volatility detected.",
+        "Bot adjusted strategy.",
+        "Network conditions monitored.",
+        "System operating normally."
+    ]
+};
+
+function autoLog() {
+    const pool = LOG_MESSAGES[VIEW_MODE];
+    addSystemLog(pool[Math.floor(Math.random() * pool.length)]);
+}
+
+/* STATE UI */
+function updateBotState() {
+    botStateEl.innerText = BOT_STATE;
+    botStateEl.className = BOT_STATE;
+}
+
+/* KEYBOARD MODE SWITCH */
+document.addEventListener("keydown", e => {
+    if (e.key.toLowerCase() === "m") {
+        VIEW_MODE = VIEW_MODE === "OPERATOR" ? "OBSERVER" : "OPERATOR";
+        applyViewMode();
     }
-    setInterval(addLog, 4000);
+});
+
+/* INIT */
+applyViewMode();
+updateBotState();
+setInterval(autoLog, 4000);
 </script>
 
 </body>
