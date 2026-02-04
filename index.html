@@ -2,84 +2,111 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>MUNKI-D | RED OPS TERMINAL</title>
+    <title>MUNKI-D | WAR ROOM v2.0</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root { --main-red: #ff0000; --dark-red: #440000; --bg-black: #050000; }
-        body { background-color: var(--bg-black); color: var(--main-red); font-family: 'OCR A Extended', monospace; margin: 0; padding: 20px; text-transform: uppercase; }
-        .header { border-bottom: 2px solid var(--main-red); padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .panel { border: 1px solid var(--main-red); padding: 15px; background: rgba(255, 0, 0, 0.05); box-shadow: inset 0 0 15px var(--dark-red); }
-        .neon-text { text-shadow: 0 0 8px var(--main-red); font-size: 1.2em; }
-        #terminal-log { height: 200px; overflow-y: hidden; font-size: 12px; line-height: 1.5; color: #ff6666; }
-        .stat-value { font-size: 2em; font-weight: bold; margin: 10px 0; }
-        canvas { max-width: 100%; height: 200px !important; }
-        .radar { width: 100px; height: 100px; border-radius: 50%; border: 1px solid var(--main-red); position: relative; margin: 0 auto; overflow: hidden; }
-        .radar-sweep { position: absolute; width: 100%; height: 100%; background: conic-gradient(from 0deg, transparent, rgba(255,0,0,0.4)); animation: rotate 3s linear infinite; }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        :root { --main-red: #ff0000; --neon-blue: #00f2ff; --neon-yellow: #f4ff00; --bg-black: #050000; }
+        body { background: var(--bg-black); color: var(--main-red); font-family: 'Courier New', monospace; margin: 0; padding: 15px; overflow-x: hidden; }
+        .header { border-bottom: 2px solid var(--main-red); display: flex; justify-content: space-between; padding: 10px; margin-bottom: 20px; text-shadow: 0 0 10px var(--main-red); }
+        
+        /* Mappa delle Radici */
+        .root-map { display: flex; justify-content: space-around; margin-bottom: 20px; background: rgba(255,0,0,0.05); padding: 20px; border: 1px solid var(--dark-red); }
+        .pool-node { width: 80px; height: 80px; border-radius: 50%; border: 2px solid; display: flex; align-items: center; justify-content: center; font-size: 10px; text-align: center; position: relative; transition: 0.5s; }
+        .safe { border-color: var(--neon-blue); color: var(--neon-blue); box-shadow: 0 0 15px var(--neon-blue); }
+        .warning { border-color: var(--neon-yellow); color: var(--neon-yellow); box-shadow: 0 0 15px var(--neon-yellow); animation: blink 1s infinite; }
+        .danger { border-color: var(--main-red); color: var(--main-red); box-shadow: 0 0 20px var(--main-red); animation: blink 0.5s infinite; }
+
+        /* Griglia Layout */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .panel { border: 1px solid var(--main-red); padding: 15px; background: rgba(10,0,0,0.8); height: 250px; overflow-y: auto; }
+        
+        /* Chat Attacchi */
+        .attack-log { font-size: 12px; line-height: 1.6; }
+        .success { color: #00ff00; }
+        .fail { color: var(--main-red); font-weight: bold; }
+
+        /* Pulsanti */
+        .btn-group { margin-top: 15px; display: flex; gap: 10px; }
+        button { background: transparent; border: 1px solid var(--main-red); color: var(--main-red); padding: 8px; cursor: pointer; text-transform: uppercase; font-size: 10px; }
+        button:hover { background: var(--main-red); color: black; }
+
+        @keyframes blink { 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="neon-text">MUNKI-D AI // INTERNAL SECURITY SYSTEM</div>
-        <div>STATUS: <span style="animation: blink 1s infinite;">● OPERATIVE</span></div>
-    </div>
 
-    <div class="grid-container">
-        <div class="panel">
-            <div class="neon-text">TARGET PROFIT (RADIX)</div>
-            <div class="stat-value">€20.05 / <span style="opacity:0.5">€20.00</span></div>
-            <canvas id="profitChart"></canvas>
-        </div>
+<div class="header">
+    <div>[ COMMANDER: MARCO ] - MUNKI-D CORE ACTIVE</div>
+    <div id="clock">00:00:00</div>
+</div>
 
-        <div class="panel" style="text-align: center;">
-            <div class="neon-text">BLOCKCHAIN SCANNER</div>
-            <div class="radar" style="margin-top:20px;">
-                <div class="radar-sweep"></div>
+<div class="root-map">
+    <div class="pool-node safe" id="p1">KISHI/WBTC<br>SECURE</div>
+    <div class="pool-node warning" id="p2">KISHI/POL<br>SCANNING</div>
+    <div class="pool-node danger" id="p3">KISHI/USDC<br>ATTACK</div>
+</div>
+
+<div class="grid">
+    <div class="panel">
+        <div style="text-shadow: 0 0 5px var(--main-red);">LIVE ATTACK RADAR (CHRONOLOGY)</div>
+        <div id="attack-chat" class="attack-log">
             </div>
-            <p style="font-size: 10px; margin-top: 15px;">SCANNING: POLYGON POS...<br>DETECTED: 14 NODES ONLINE</p>
-        </div>
-
-        <div class="panel" style="grid-column: span 2;">
-            <div class="neon-text">SYSTEM CORE LOGS</div>
-            <div id="terminal-log"></div>
+    </div>
+    
+    <div class="panel">
+        <div>PROFIT/LOSS REAL-TIME</div>
+        <canvas id="miniChart"></canvas>
+        <div class="btn-group">
+            <button onclick="alert('Ricerca nuove Pool avviata...')">+ ADD POOL</button>
+            <button onclick="alert('Protocollo Stealth Attivato')">STEALTH MODE</button>
         </div>
     </div>
+</div>
 
-    <script>
-        // Logica del Terminale
-        const log = document.getElementById('terminal-log');
-        const messages = [
-            "[OK] MUNKI-D CORE LOADED", "[WARN] DETECTED BOT 0x42A... ON KISHI POOL",
-            "[INFO] ADAPTING RADIX THEORY TO CURRENT VOLATILITY", "[OK] FLASH LOAN SIMULATION: SUCCESS",
-            "[INFO] CALCULATING GAS OPTIMIZATION...", "[ACTION] INJECTING VIRTUAL LIQUIDITY...",
-            "[SYSTEM] WAITING FOR COMMANDER APPROVAL..."
-        ];
-        setInterval(() => {
-            const p = document.createElement('div');
-            p.textContent = `> ${messages[Math.floor(Math.random() * messages.length)]}`;
-            log.prepend(p);
-            if(log.children.length > 10) log.lastChild.remove();
-        }, 2000);
+<script>
+    // Orologio
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
-        // Grafico dei Profitti
-        const ctx = document.getElementById('profitChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Giorno 1', 'Giorno 2', 'Giorno 3', 'Oggi'],
-                datasets: [{
-                    label: 'Trend Profitto (€)',
-                    data: [5.2, 8.45, 14.8, 20.05],
-                    borderColor: '#ff0000',
-                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: { responsive: true, scales: { y: { ticks: { color: '#ff0000' } }, x: { ticks: { color: '#ff0000' } } } }
-        });
-    </script>
+    // Simulazione Chat Attacchi
+    const chat = document.getElementById('attack-chat');
+    const enemies = ["0xBot_Alpha", "MEV_Slayer", "Flash_Wolf", "0xSniped"];
+    
+    function addAttack() {
+        const time = new Date().toLocaleTimeString();
+        const enemy = enemies[Math.floor(Math.random() * enemies.length)];
+        const isSuccess = Math.random() > 0.7; // 70% fallimento bot nemici
+        const p = document.createElement('div');
+        
+        if(isSuccess) {
+            p.innerHTML = `[${time}] <span class="fail">!!! ATTACCO DA ${enemy} !!!</span> Pool: USDC. Esito: Riuscito (-€0.04 EVITABILI)`;
+        } else {
+            p.innerHTML = `[${time}] [DIFESA] ${enemy} ha fallito su KISHI/POL. <span class="success">Perdita Bot: -€12.50 (GAS)</span>`;
+        }
+        
+        chat.prepend(p);
+        if(chat.children.length > 15) chat.lastChild.remove();
+    }
+    setInterval(addAttack, 4000);
+
+    // Cambio stati casuale delle pool per la grafica
+    setInterval(() => {
+        const nodes = ['p1', 'p2', 'p3'];
+        const states = ['safe', 'warning', 'danger'];
+        const randomNode = document.getElementById(nodes[Math.floor(Math.random()*3)]);
+        randomNode.className = `pool-node ${states[Math.floor(Math.random()*3)]}`;
+    }, 5000);
+
+    // Grafico Mini
+    const ctx = document.getElementById('miniChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Lun', 'Mar', 'Mer', 'Gio'],
+            datasets: [{ label: 'Attacchi Respinti', data: [12, 19, 3, 15], backgroundColor: '#ff0000' }]
+        },
+        options: { color: '#ff0000', scales: { y: { beginAtZero: true } } }
+    });
+</script>
+
 </body>
 </html>
