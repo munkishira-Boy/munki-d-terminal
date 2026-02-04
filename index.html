@@ -1,36 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
-    <title>MUNKI-D | COMMAND CENTER</title>
+    <meta charset="UTF-8">
+    <title>MUNKI-D | RED OPS TERMINAL</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background: #050505; color: #00ff41; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
-        #terminal { padding: 20px; height: 100vh; background: radial-gradient(circle, #0a1a0a 0%, #050505 100%); }
-        .neon-text { text-shadow: 0 0 10px #00ff41; font-weight: bold; }
-        .stats-box { border: 1px solid #00ff41; padding: 10px; display: inline-block; margin-top: 20px; box-shadow: 0 0 15px rgba(0,255,65,0.2); }
-        .map-placeholder { width: 300px; height: 150px; border: 1px dashed #00ff41; margin-top: 20px; display: flex; align-items: center; justify-content: center; opacity: 0.6; }
-        #log { font-size: 14px; margin-top: 15px; color: #008f11; }
-        .red-alert { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+        :root { --main-red: #ff0000; --dark-red: #440000; --bg-black: #050000; }
+        body { background-color: var(--bg-black); color: var(--main-red); font-family: 'OCR A Extended', monospace; margin: 0; padding: 20px; text-transform: uppercase; }
+        .header { border-bottom: 2px solid var(--main-red); padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .panel { border: 1px solid var(--main-red); padding: 15px; background: rgba(255, 0, 0, 0.05); box-shadow: inset 0 0 15px var(--dark-red); }
+        .neon-text { text-shadow: 0 0 8px var(--main-red); font-size: 1.2em; }
+        #terminal-log { height: 200px; overflow-y: hidden; font-size: 12px; line-height: 1.5; color: #ff6666; }
+        .stat-value { font-size: 2em; font-weight: bold; margin: 10px 0; }
+        canvas { max-width: 100%; height: 200px !important; }
+        .radar { width: 100px; height: 100px; border-radius: 50%; border: 1px solid var(--main-red); position: relative; margin: 0 auto; overflow: hidden; }
+        .radar-sweep { position: absolute; width: 100%; height: 100%; background: conic-gradient(from 0deg, transparent, rgba(255,0,0,0.4)); animation: rotate 3s linear infinite; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div id="terminal">
-        <h1 class="neon-text">MUNKI-D SYSTEM v1.0 ONLINE</h1>
-        <p>> INITIALIZING RADIX THEORY ADAPTATION...</p>
-        <p>> SCANNING POLYGON MAINNET... [OK]</p>
-        
-        <div class="stats-box">
-            <div>PROFITTO ACCUMULATO: <span id="profit">€20.05</span></div>
-            <div>STATUS DIFESA KISHI: <span style="color: #00ff41">ATTIVA</span></div>
-            <div>MUNIZIONI (GAS): 0.00 POL</div>
+    <div class="header">
+        <div class="neon-text">MUNKI-D AI // INTERNAL SECURITY SYSTEM</div>
+        <div>STATUS: <span style="animation: blink 1s infinite;">● OPERATIVE</span></div>
+    </div>
+
+    <div class="grid-container">
+        <div class="panel">
+            <div class="neon-text">TARGET PROFIT (RADIX)</div>
+            <div class="stat-value">€20.05 / <span style="opacity:0.5">€20.00</span></div>
+            <canvas id="profitChart"></canvas>
         </div>
 
-        <div class="map-placeholder">MAPPA NODI IN CARICAMENTO...</div>
+        <div class="panel" style="text-align: center;">
+            <div class="neon-text">BLOCKCHAIN SCANNER</div>
+            <div class="radar" style="margin-top:20px;">
+                <div class="radar-sweep"></div>
+            </div>
+            <p style="font-size: 10px; margin-top: 15px;">SCANNING: POLYGON POS...<br>DETECTED: 14 NODES ONLINE</p>
+        </div>
 
-        <div id="log">
-            [12:00] - MUNKI-D: Test finale completato con successo.<br>
-            [12:01] - RADIX: Evento Radice rilevato su Pool WBTC.<br>
-            [12:05] - STATUS: Pronto per iniezione reale.
+        <div class="panel" style="grid-column: span 2;">
+            <div class="neon-text">SYSTEM CORE LOGS</div>
+            <div id="terminal-log"></div>
         </div>
     </div>
+
+    <script>
+        // Logica del Terminale
+        const log = document.getElementById('terminal-log');
+        const messages = [
+            "[OK] MUNKI-D CORE LOADED", "[WARN] DETECTED BOT 0x42A... ON KISHI POOL",
+            "[INFO] ADAPTING RADIX THEORY TO CURRENT VOLATILITY", "[OK] FLASH LOAN SIMULATION: SUCCESS",
+            "[INFO] CALCULATING GAS OPTIMIZATION...", "[ACTION] INJECTING VIRTUAL LIQUIDITY...",
+            "[SYSTEM] WAITING FOR COMMANDER APPROVAL..."
+        ];
+        setInterval(() => {
+            const p = document.createElement('div');
+            p.textContent = `> ${messages[Math.floor(Math.random() * messages.length)]}`;
+            log.prepend(p);
+            if(log.children.length > 10) log.lastChild.remove();
+        }, 2000);
+
+        // Grafico dei Profitti
+        const ctx = document.getElementById('profitChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Giorno 1', 'Giorno 2', 'Giorno 3', 'Oggi'],
+                datasets: [{
+                    label: 'Trend Profitto (€)',
+                    data: [5.2, 8.45, 14.8, 20.05],
+                    borderColor: '#ff0000',
+                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: { responsive: true, scales: { y: { ticks: { color: '#ff0000' } }, x: { ticks: { color: '#ff0000' } } } }
+        });
+    </script>
 </body>
 </html>
