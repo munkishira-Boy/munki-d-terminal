@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MUNKI-D | COMMAND CENTER</title>
+    <style>
+        body { background: #050505; color: #00ff41; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
+        #terminal { padding: 20px; height: 100vh; background: radial-gradient(circle, #0a1a0a 0%, #050505 100%); }
+        .neon-text { text-shadow: 0 0 10px #00ff41; font-weight: bold; }
+        .stats-box { border: 1px solid #00ff41; padding: 10px; display: inline-block; margin-top: 20px; box-shadow: 0 0 15px rgba(0,255,65,0.2); }
+        .map-placeholder { width: 300px; height: 150px; border: 1px dashed #00ff41; margin-top: 20px; display: flex; align-items: center; justify-content: center; opacity: 0.6; }
+        #log { font-size: 14px; margin-top: 15px; color: #008f11; }
+        .red-alert { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+    </style>
+</head>
+<body>
+    <div id="terminal">
+        <h1 class="neon-text">MUNKI-D SYSTEM v1.0 ONLINE</h1>
+        <p>> INITIALIZING RADIX THEORY ADAPTATION...</p>
+        <p>> SCANNING POLYGON MAINNET... [OK]</p>
+        
+        <div class="stats-box">
+            <div>PROFITTO ACCUMULATO: <span id="profit">€20.05</span></div>
+            <div>STATUS DIFESA KISHI: <span style="color: #00ff41">ATTIVA</span></div>
+            <div>MUNIZIONI (GAS): 0.00 POL</div>
+        </div>
+
+        <div class="map-placeholder">MAPPA NODI IN CARICAMENTO...</div>
+
+        <div id="log">
+            [12:00] - MUNKI-D: Test finale completato con successo.<br>
+            [12:01] - RADIX: Evento Radice rilevato su Pool WBTC.<br>
+            [12:05] - STATUS: Pronto per iniezione reale.
+        </div>
+    </div>
+</body>
+</html>
